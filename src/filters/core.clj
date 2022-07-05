@@ -7,16 +7,16 @@
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 
 (def param [{:field-name "importo" :comparator "not-equal" :input-value "10000" :input-type "number"}
-             {:field-name "nome_cliente" :comparator "contains" :input-value "NOV" :input-type "text"}
-             {:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-01-01" :input-type "date"}])
+            {:field-name "nome_cliente" :comparator "contains" :input-value "NOV" :input-type "text"}
+            {:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-01-01" :input-type "date"}])
 
-(def comparator-mapping {"greater" "> ?"
-                         "less" "< ?"
-                         "equal" "= ?"
-                         "not-equal" "!= ?"
-                         "between" "BETWEEN ? AND ?"
-                         "contains" "LIKE %?%"
-                         "not-contains" "NOT LIKE %?%"})
+(def comparator-mapping {"greater" ">"
+                         "less" "<"
+                         "equal" "= "
+                         "not-equal" "!= "
+                         "between" "BETWEEN "
+                         "contains" "LIKE "
+                         "not-contains" "NOT LIKE"})
 
 (def field-name-to-columns {"importo" "fatture.importo"
                             "fee_best" "bids.fee_richiesta"
@@ -28,38 +28,37 @@
                             "data_scadenza_" "data_scadenza_" 
                             "data_interessi_" "data_interessi_"})
 
+
+(defn number-values [comparator input-value max-input-value] (condp = comparator
+                                                               "equal" input-value
+                                                               "not-equal" input-value
+                                                               "greater" input-value
+                                                               "less" input-value
+                                                               "between" (str input-value  " AND "  max-input-value )))
+
+(defn text-values [comparator input-value] (condp = comparator
+                                             "equal" (str "'%" input-value "%'")
+                                             "not-equal" (str "'%" input-value "%'")
+                                             "contains" (str "'%" input-value "%'")
+                                             "not-contains" (str "'%" input-value "%'")))
+
+(defn date-values [comparator input-value max-input-value] (condp = comparator
+                                                               "equal" (str "'%" input-value "%'")
+                                                               "not-equal" (str "'%" input-value "%'")
+                                                               "greater" (str "'%" input-value "%'")
+                                                               "less" (str "'%" input-value "%'")
+                                                               "between" (str "'" input-value "'" " AND " "'" max-input-value "'")))
+
 (defn map-to-raw-sql [params]
-  (->> (for [{:keys [field-name comparator input-type]} params]
+  (->> (for [{:keys [field-name comparator input-value max-input-value input-type]} params]
          (->> (condp = input-type
                 "number" [(field-name-to-columns field-name)
-                          (comparator-mapping comparator)]
+                          (comparator-mapping comparator) (number-values comparator input-value max-input-value)] 
                 "text" [(field-name-to-columns field-name)
-                        (comparator-mapping comparator)]
+                        (comparator-mapping comparator)(text-values comparator input-value)]
                 "date" [(field-name-to-columns field-name)
-                        (comparator-mapping comparator)])
+                        (comparator-mapping comparator) (date-values comparator input-value max-input-value)])
               (st/join " ")))
        (st/join " AND ")))
 
-
 (map-to-raw-sql param)
-
-
-(defn flatten [x]
-  (if (coll? x)
-    (mapcat flatten x)
-    [x]))
-;;"equal" input-value "not-equal" input-value "greater" input-value "less" input-value
-
-(defn map-to-query-params [params]
-  (->> (for [{:keys [comparator input-value max-input-value input-type]} params]
-                  (->> (condp = input-type
-                         "number" [({"between" [input-value max-input-value] "equal" input-value "not-equal" input-value "greater" input-value "less" input-value} comparator)]
-                         "text" [input-value]
-                         "date" [({"between" [input-value max-input-value] "equal" input-value "not-equal" input-value "greater" input-value "less" input-value} comparator)])))
-       (apply concat)
-       (filterv (complement nil?))
-       (flatten)
-       (into [])
-       ))
-
-(map-to-query-params param)
