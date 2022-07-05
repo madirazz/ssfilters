@@ -6,8 +6,8 @@
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 
-(def param [{:field-name "importo" :comparator "not-equal" :input-value "10000" :input-type "number"}
-            {:field-name "nome_cliente" :comparator "contains" :input-value "NOV" :input-type "text"}
+(def param [{:field-name "importo" :comparator "equal" :input-value "10000" :input-type "number"}
+            {:field-name "nome_cliente" :comparator "equal" :input-value "NOV" :input-type "text"}
             {:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-01-01" :input-type "date"}])
 
 (def comparator-mapping {"greater" ">"
@@ -37,16 +37,16 @@
                                                                "between" (str input-value  " AND "  max-input-value )))
 
 (defn text-values [comparator input-value] (condp = comparator
-                                             "equal" (str "'%" input-value "%'")
-                                             "not-equal" (str "'%" input-value "%'")
+                                             "equal" (str "'" input-value "'")
+                                             "not-equal" (str "'" input-value "'")
                                              "contains" (str "'%" input-value "%'")
                                              "not-contains" (str "'%" input-value "%'")))
 
 (defn date-values [comparator input-value max-input-value] (condp = comparator
-                                                               "equal" (str "'%" input-value "%'")
-                                                               "not-equal" (str "'%" input-value "%'")
-                                                               "greater" (str "'%" input-value "%'")
-                                                               "less" (str "'%" input-value "%'")
+                                                               "equal" (str "'" input-value "'")
+                                                               "not-equal" (str "'" input-value "'")
+                                                               "greater" (str "'" input-value "'")
+                                                               "less" (str "'" input-value "'")
                                                                "between" (str "'" input-value "'" " AND " "'" max-input-value "'")))
 
 (defn map-to-raw-sql [params]
