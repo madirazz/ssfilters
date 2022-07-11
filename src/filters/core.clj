@@ -6,9 +6,12 @@
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 
-(def param [{:field-name "importo" :comparator "equal" :input-value "10000" :input-type "number"}
-            {:field-name "nome_cliente" :comparator "equal" :input-value "NOV" :input-type "text"}
-            {:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-01-01" :input-type "date"}])
+(def param [{:field-name "importo" :comparator "greater" :input-value "10000" :input-type "number"}
+            {:field-name "fee_best" :comparator "greater" :input-value 70 :input-type "number"}
+            {:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
+            {:field-name "nome_seller" :comparator "not-contains" :input-value "NOV" :input-type "text"}
+            {:field-name "nome_cliente" :comparator "not-equal" :input-value "NOV" :input-type "text"}
+            {:field-name "data_pagamento" :comparator "less" :input-value "2024-01-01" :input-type "date"}])
 
 (def comparator-mapping {"greater" ">"
                          "less" "<"
@@ -24,30 +27,25 @@
                             "nome_cliente" "clienti.ragione_sociale"
                             "nome_buyer" "buyers.nome"
                             "nome_seller" "cedenti.ragione_sociale"
-                            "data_pagamento" "fatture.data_pagamento" 
-                            "data_scadenza_" "data_scadenza_" 
-                            "data_interessi_" "data_interessi_"})
+                            "data_pagamento" "fatture.data_pagamento"
+                            "data_scadenza_" "fatture.data_scadenza"
+                            "data_interessi_" "operazioni.data"})
 
-
-(defn number-values [comparator input-value max-input-value] (condp = comparator
-                                                               "equal" input-value
-                                                               "not-equal" input-value
-                                                               "greater" input-value
-                                                               "less" input-value
-                                                               "between" (str input-value  " AND "  max-input-value )))
-
-(defn text-values [comparator input-value] (condp = comparator
-                                             "equal" (str "'" input-value "'")
-                                             "not-equal" (str "'" input-value "'")
-                                             "contains" (str "'%" input-value "%'")
-                                             "not-contains" (str "'%" input-value "%'")))
-
-(defn date-values [comparator input-value max-input-value] (condp = comparator
-                                                               "equal" (str "'" input-value "'")
-                                                               "not-equal" (str "'" input-value "'")
-                                                               "greater" (str "'" input-value "'")
-                                                               "less" (str "'" input-value "'")
-                                                               "between" (str "'" input-value "'" " AND " "'" max-input-value "'")))
+(defn number-values [comparator input-value max-input-value] 
+  (if (= "between" comparator)
+    (str input-value " AND " max-input-value)
+    input-value))
+                                            
+(defn text-values [comparator input-value]
+  (if (= #{"equal" "not-equal"} comparator)
+       (str "'" input-value "'")
+       (str "'%" input-value "%'")))
+       
+       
+(defn date-values [comparator input-value max-input-value]
+  (if (= "between" comparator)
+    (str "'" input-value "'" " AND " "'" max-input-value "'")
+    (str "'" input-value "'")))
 
 (defn map-to-raw-sql [params]
   (->> (for [{:keys [field-name comparator input-value max-input-value input-type]} params]
@@ -62,3 +60,4 @@
        (st/join " AND ")))
 
 (map-to-raw-sql param)
+
