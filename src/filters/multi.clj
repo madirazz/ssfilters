@@ -17,19 +17,19 @@
 ;; "data_interessi_" "date"
 
 (def params [
-             ;;{:field-name "importo" :comparator "equal" :input-value 579500 :input-type "number"}
+             {:field-name "importo" :comparator "equal" :input-value 23204800 :input-type "number"}
              ;;{:field-name "importo" :comparator "not-equal" :input-value 579500 :input-type "number"}
              ;;{:field-name "importo" :comparator "greater" :input-value 579500 :input-type "number"}
              ;;{:field-name "importo" :comparator "less" :input-value 579500 :input-type "number"}
              ;;{:field-name "importo" :comparator "between" :input-value 579500 :max-input-value 1000000 :input-type "number"}
-             ;;{:field-name "data_scadenza_" :comparator "equal" :input-value "2021-12-20" :input-type "date"}
+             ;;{:field-name "data_scadenza_" :comparator "equal" :input-value "2022-07-31" :input-type "date"}
              ;;{:field-name "data_interessi_" :comparator "not-equal" :input-value "2022-01-01" :input-type "date"}
-             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2021-01-01" :input-type "date"}
-             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2020-01-01" :max-input-value "2021-01-01" :input-type "date"}
-             ;;{:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
-             ;;{:field-name "nome_seller" :comparator "equal" :input-value "A&A MARKETING SERVICE" :input-type "text"}
-             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "Giovanni Garavelli" :input-type "text"}
-             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "Gio" :input-type "text"}
+             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2022-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-07-01" :input-type "date"}
+             ;;{:field-name "data_scadenza_" :comparator "less" :input-value "2022-07-01" :input-type "date"}
+             ;;{:field-name "nome_seller" :comparator "equal" :input-value "GH CATANIA SRL" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "Fasanara Investments II S.A., SICAV-RAIF" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "Fas" :input-type "text"}
              ;;{:field-name "nome_cliente" :comparator "not-contains" :input-value "NOV" :input-type "text"}
              ])
 

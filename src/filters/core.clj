@@ -6,12 +6,21 @@
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 
-(def param [{:field-name "importo" :comparator "greater" :input-value "10000" :input-type "number"}
-            {:field-name "fee_best" :comparator "greater" :input-value 70 :input-type "number"}
-            {:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
-            {:field-name "nome_seller" :comparator "not-contains" :input-value "NOV" :input-type "text"}
-            {:field-name "nome_cliente" :comparator "not-equal" :input-value "NOV" :input-type "text"}
-            {:field-name "data_pagamento" :comparator "less" :input-value "2024-01-01" :input-type "date"}])
+(def params [{:field-name "importo" :comparator "equal" :input-value 23204800 :input-type "number"}
+             ;;{:field-name "importo" :comparator "not-equal" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "greater" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "less" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "between" :input-value 579500 :max-input-value 1000000 :input-type "number"}
+             ;;{:field-name "data_scadenza_" :comparator "equal" :input-value "2022-07-31" :input-type "date"}
+             ;;{:field-name "data_interessi_" :comparator "not-equal" :input-value "2022-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2022-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2022-01-01" :max-input-value "2022-07-01" :input-type "date"}
+             ;;{:field-name "data_scadenza_" :comparator "less" :input-value "2022-07-01" :input-type "date"}
+             ;;{:field-name "nome_seller" :comparator "equal" :input-value "GH CATANIA SRL" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "Fasanara Investments II S.A., SICAV-RAIF" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "Fas" :input-type "text"}
+             ;;{:field-name "nome_cliente" :comparator "not-contains" :input-value "NOV" :input-type "text"}
+             ])
 
 (def comparator-mapping {"greater" ">"
                          "less" "<"
@@ -37,7 +46,7 @@
     input-value))
                                             
 (defn text-values [comparator input-value]
-  (if (= #{"equal" "not-equal"} comparator)
+  (if ( #{"equal" "not-equal"} comparator)
        (str "'" input-value "'")
        (str "'%" input-value "%'")))
        
@@ -59,5 +68,5 @@
               (st/join " ")))
        (st/join " AND ")))
 
-(map-to-raw-sql param)
+(map-to-raw-sql params)
 
