@@ -6,19 +6,30 @@
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 
-(def params [{:field-name "numero" :comparator "equal" :input-value 70 :input-type "number"}
-             ;;{:field-name "numero" :comparator "not-equal" :input-value 70 :input-type "number"}
-             ;;{:field-name "fee_best" :comparator "greater" :input-value 70 :input-type "number"}
-             ;;{:field-name "fee_best" :comparator "less" :input-value 70 :input-type "number"}
-             ;;{:field-name "importo" :comparator "between" :input-value 20 :max-input-value 100 :input-type "number"}
-             {:field-name "data_scadenza_" :comparator "equal" :input-value "2022-01-01" :input-type "date"}
+;; "importo" "number"
+;; "fee_best" "number"
+;; "numero" "text"
+;; "nome_cliente" "text"
+;; "nome_buyer" "text"
+;; "nome_seller" "text"
+;; "data_pagamento" "date"
+;; "data_scadenza_" "date"
+;; "data_interessi_" "date"
+
+(def params [
+             ;;{:field-name "importo" :comparator "equal" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "not-equal" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "greater" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "less" :input-value 579500 :input-type "number"}
+             ;;{:field-name "importo" :comparator "between" :input-value 579500 :max-input-value 1000000 :input-type "number"}
+             ;;{:field-name "data_scadenza_" :comparator "equal" :input-value "2021-12-20" :input-type "date"}
              ;;{:field-name "data_interessi_" :comparator "not-equal" :input-value "2022-01-01" :input-type "date"}
-             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2024-01-01" :input-type "date"}
-             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2024-01-01" :max-input-value "2024-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2021-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2020-01-01" :max-input-value "2021-01-01" :input-type "date"}
              ;;{:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
-             {:field-name "nome_seller" :comparator "equal" :input-value "NOV" :input-type "text"}
-             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "NOV" :input-type "text"}
-             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "NOV" :input-type "text"}
+             ;;{:field-name "nome_seller" :comparator "equal" :input-value "A&A MARKETING SERVICE" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "Giovanni Garavelli" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "Gio" :input-type "text"}
              ;;{:field-name "nome_cliente" :comparator "not-contains" :input-value "NOV" :input-type "text"}
              ])
 
@@ -36,9 +47,12 @@
   (-> (make-hierarchy)
       (derive :bounded :any)
       (derive :equality :any)
-      (derive :text :any)
+      (derive :text :bounded)
+      (derive :text :equality)
       (derive :number :bounded)
-      (derive :date :bounded)))
+      (derive :number :equality)
+      (derive :date :bounded)
+      (derive :date :equality)))
 
 (defmulti to-sql
   (fn [{:keys [input-type comparator]}]
@@ -85,6 +99,6 @@
               (if (= input-type "number") max-input-value (str "'" input-value "'")))})
 
 (let [data (map to-sql params)]
-  {:query (clojure.string/join " and " (map :q data))})
+  (clojure.string/join " and " (map :q data)))
 
 
