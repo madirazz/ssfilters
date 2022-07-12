@@ -6,13 +6,20 @@
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 
-(def params [{:field-name "importo" :comparator "between" :input-value 20 :max-input-value 100 :input-type "number"}
-             {:field-name "data_pagamento" :comparator "between" :input-value "2024-01-01" :max-input-value "2024-01-01" :input-type "date"}
-            {:field-name "fee_best" :comparator "greater" :input-value 70 :input-type "number"}
-            {:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
-            ;;{:field-name "nome_seller" :comparator "not-contains" :input-value "NOV" :input-type "text"}
-            ;;{:field-name "nome_cliente" :comparator "not-equal" :input-value "NOV" :input-type "text"}
-            {:field-name "data_pagamento" :comparator "greater" :input-value "2024-01-01" :input-type "date"}
+(def params [{:field-name "numero" :comparator "equal" :input-value 70 :input-type "number"}
+             ;;{:field-name "numero" :comparator "not-equal" :input-value 70 :input-type "number"}
+             ;;{:field-name "fee_best" :comparator "greater" :input-value 70 :input-type "number"}
+             ;;{:field-name "fee_best" :comparator "less" :input-value 70 :input-type "number"}
+             ;;{:field-name "importo" :comparator "between" :input-value 20 :max-input-value 100 :input-type "number"}
+             {:field-name "data_scadenza_" :comparator "equal" :input-value "2022-01-01" :input-type "date"}
+             ;;{:field-name "data_interessi_" :comparator "not-equal" :input-value "2022-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "greater" :input-value "2024-01-01" :input-type "date"}
+             ;;{:field-name "data_pagamento" :comparator "between" :input-value "2024-01-01" :max-input-value "2024-01-01" :input-type "date"}
+             ;;{:field-name "data_scadenza_" :comparator "less" :input-value "2022-01-01" :input-type "date"}
+             {:field-name "nome_seller" :comparator "equal" :input-value "NOV" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "not-equal" :input-value "NOV" :input-type "text"}
+             ;;{:field-name "nome_buyer" :comparator "contains" :input-value "NOV" :input-type "text"}
+             ;;{:field-name "nome_cliente" :comparator "not-contains" :input-value "NOV" :input-type "text"}
              ])
 
 (def field-name-to-columns {"importo" "fatture.importo"
@@ -38,9 +45,25 @@
     (mapv keyword [input-type comparator]))
   :hierarchy #'sql-hierarchy)
 
-(defmethod to-sql [:text :include]
+(defmethod to-sql [:equality :equal]
+  [{:keys [field-name input-value input-type]}]
+  {:q (format "%s = %s"
+              (field-name-to-columns field-name)
+              (if (= input-type "number") input-value (str "'" input-value "'")))})
+
+(defmethod to-sql [:equality :not-equal]
+  [{:keys [field-name input-value input-type]}]
+  {:q (format "%s != %s"
+              (field-name-to-columns field-name)
+              (if (= input-type "number") input-value (str "'" input-value "'")))})
+
+(defmethod to-sql [:text :contains]
   [{:keys [field-name input-value]}]
-  {:q (format "%s like '%%%s%%'" field-name input-value)})
+  {:q (format "%s LIKE '%%%s%%'" (field-name-to-columns field-name) input-value)})
+
+(defmethod to-sql [:text :not-contains]
+  [{:keys [field-name input-value]}]
+  {:q (format "%s NOT LIKE '%%%s%%'" (field-name-to-columns field-name) input-value)})
 
 (defmethod to-sql [:bounded :less]
   [{:keys [field-name input-value input-type]}]
