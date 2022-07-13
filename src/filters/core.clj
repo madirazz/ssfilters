@@ -6,7 +6,7 @@
 ;; text values: "equal", "not-equal", "contains", "not-contains"
 ;; date values: "equal", "not-equal", "greater", "less", "between"
 
-(def params [{:field-name "importo" :comparator "equal" :input-value 23204800 :input-type "number"}
+(def params [;;cd pro{:field-name "importo" :comparator "equal" :input-value 23204800 :input-type "number"}
              ;;{:field-name "importo" :comparator "not-equal" :input-value 579500 :input-type "number"}
              ;;{:field-name "importo" :comparator "greater" :input-value 579500 :input-type "number"}
              ;;{:field-name "importo" :comparator "less" :input-value 579500 :input-type "number"}
